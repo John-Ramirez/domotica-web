@@ -1,0 +1,22 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Proyecto interfaz web domotica",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/John-Ramirez/domotica-web.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Jhon Ramirez, jhonixt@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.87.0",
+    "node.js": "0.0.0",
+    "nodejs": "0.0.0"
+  }
+}
