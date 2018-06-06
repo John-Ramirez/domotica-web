@@ -1,0 +1,180 @@
+<html>
+	<head>
+		<title>Proyecto Domotica Politecnico Grancolombiano</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container" style="margin-top: 50;">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					Proyecto Domotica Politecnico Grancolombiano
+				</div>
+				<div class="panel-body">
+					<img src="grafico.png" style="z-index: 1000; position: absolute; width: 340; height: 340; margin-left: 700px;" />
+					<div class="row">
+						<div class="col-md-2">
+							<label for="temperatura">Temperatura:</label>
+							<div class="input-group">
+								<input type="number" class="form-control" id="temperatura" readonly="readonly" value="0"/>
+								<span class="input-group-addon">°C</span>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<label for="fotoresistor">Fotoresistor:</label>
+							<div class="input-group">
+								<input type="number" class="form-control" id="fotoresistor" readonly="readonly" value="0"/>
+								<span class="input-group-addon">Lumen</span>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<label for="pir">Sensor Movimiento:</label>
+							<div class="input-group">
+								<input type="text" class="form-control" id="pir" readonly="readonly" value="false"/>
+								<span class="input-group-addon">PIR</span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row" style="margin-top: 50px;">
+						<div class="col-md-2">
+							<label>Ventilador:</label><br/>
+			       			<button id="ventiladorOn" type="button" class="btn btn-sm btn-success">ON</button>
+			       			<button id="ventiladorOff" type="button" class="btn btn-sm btn-danger">OFF</button>
+						</div>
+						<div class="col-md-2">
+							<label>Servo Motor Garaje:</label><br/>
+			       			<button id="ServoUnoOn" type="button" class="btn btn-sm btn-success">OPEN</button>
+			       			<button id="ServoUnoOff" type="button" class="btn btn-sm btn-danger">CLOSE</button>
+						</div>
+						<div class="col-md-2">
+							<label>Servo Motor Puerta:</label><br/>
+			       			<button id="ServoDosOn" type="button" class="btn btn-sm btn-success">OPEN</button>
+			       			<button id="ServoDosOff" type="button" class="btn btn-sm btn-danger">CLOSE</button>
+						</div>
+						<div class="col-md-2">
+							<label>Led Habitacion:</label><br/>
+			       			<button id="ledOn" type="button" class="btn btn-sm btn-success">ON</button>
+			       			<button id="ledOff" type="button" class="btn btn-sm btn-danger">OFF</button>
+						</div>
+					</div>
+
+					<div class="row" style="margin-top: 50px;">
+						<div class="col-md-4">
+							<label>LCD:</label><br/>
+							<div class="input-group">
+								<input type="text" class="form-control" id="textoUno" maxlength="15" />
+								<span class="input-group-addon">Primera Linea</span>
+							</div>
+							<br/>
+							<div class="input-group">
+								<input type="text" class="form-control" id="textoDos" maxlength="15" />
+								<span class="input-group-addon">Segunda Linea</span>
+							</div>
+							<br/>
+							<button id="enviarLcd" type="button" class="btn btn-sm btn-info">Mostrar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="socket.io/socket.io.js" charset="utf-8"></script>
+		<script src="index.js"></script>
+		<script>
+			var temperatura = document.getElementById('temperatura');
+			var fotoresistor = document.getElementById('fotoresistor');
+			var pir = document.getElementById('pir');
+
+		   	var socket = io();
+
+		   	socket.on('temperatura', function (data) {
+		   		temperatura.value = `${data}`;
+		   	});
+
+		   	socket.on('fotoresistor', function (data) {
+		   		fotoresistor.value = `${data}`;
+		   	});
+
+		   	socket.on('pir', function (data) {
+		   		pir.value = `${data}`;
+		   	});
+
+			
+
+			function offVentilador(){
+			    socket.emit('ventiladorOff');
+			}
+
+			function onVentilador(){
+			    socket.emit('ventiladorOn');
+			}
+
+
+			function offServoUno(){
+			    socket.emit('ServoUnoOff');
+			}
+
+			function onServoUno(){
+			    socket.emit('ServoUnoOn');
+			}
+
+
+			function offServoDos(){
+			    socket.emit('ServoDosOff');
+			}
+
+			function onServoDos(){
+			    socket.emit('ServoDosOn');
+			}
+
+
+			function offLed(){
+			    socket.emit('ledOff');
+			}
+
+			function onLed(){
+			    socket.emit('ledOn');
+			}
+
+
+
+
+			function lcdEnviar(){
+				var textoUno = document.getElementById('textoUno').value;
+				var textoDos = document.getElementById('textoDos').value;
+
+				if(textoUno === ""){
+					alert("No puede dejar los campos de la lcd vacios");
+					return false;
+				}
+
+				if(textoDos === ""){
+					alert("No puede dejar los campos de la lcd vacios");
+					return false;
+				}
+
+			    socket.emit('textoLcd', {textoUno, textoDos});
+			}
+
+
+			document.getElementById('ventiladorOff').onclick = offVentilador;
+			document.getElementById('ventiladorOn').onclick = onVentilador;
+
+
+			document.getElementById('ServoUnoOff').onclick = offServoUno;
+			document.getElementById('ServoUnoOn').onclick = onServoUno;
+
+
+			document.getElementById('ServoDosOff').onclick = offServoDos;
+			document.getElementById('ServoDosOn').onclick = onServoDos;
+
+
+			document.getElementById('ledOff').onclick = offLed;
+			document.getElementById('ledOn').onclick = onLed;
+
+
+			document.getElementById('enviarLcd').onclick = lcdEnviar;
+
+		</script>
+	</body>
+</html>
